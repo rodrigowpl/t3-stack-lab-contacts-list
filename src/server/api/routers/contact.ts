@@ -20,6 +20,19 @@ export const contactRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      const existingContact = await ctx.prisma.contact.findUnique({
+        where: {
+          email: input.contact.email
+        }
+      })
+
+      if (existingContact && existingContact.id !== input.id) {
+        throw new TRPCError({
+          code: 'CONFLICT',
+          message: 'Email already exists'
+        })
+      }
+
       if (input.id) {
         const contactUpdated = await ctx.prisma.contact.update({
           where: {
@@ -28,18 +41,6 @@ export const contactRouter = createTRPCRouter({
           data: input.contact
         })
         return contactUpdated
-      }
-
-      const existingContact = await ctx.prisma.contact.findUnique({
-        where: {
-          email: input.contact.email
-        }
-      })
-      if (existingContact) {
-        throw new TRPCError({
-          code: 'CONFLICT',
-          message: 'Email already exists'
-        })
       }
 
       const contactCreated = await ctx.prisma.contact.create({
