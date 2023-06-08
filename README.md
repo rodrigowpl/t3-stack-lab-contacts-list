@@ -1,4 +1,4 @@
-# Santé Coding Task
+# T3 Stack lab - Contacts List
 
 Project bootstrapped using [T3 Stack](https://create.t3.gg/)
 
